@@ -1,7 +1,7 @@
-package com.dkit.oopca5.server;
+package com.dkit.oopca5.DTOs;
 
 
-import com.dkit.oopca5.DTOs.Student;
+import com.dkit.oopca5.Exceptions.DaoException;
 
 import java.io.*;
 import java.util.*;
@@ -26,7 +26,8 @@ public class StudentManager {
         studentMap.put(222340, new Student(222340, "1998-03-06", "pass10"));
 
 
-        StudentDaoInterface studentDao = new mySqlStudentDao();
+        com.dkit.oopca5.DAOs.StudentDaoInterface studentDao;
+        studentDao = new mySqlStudentDao();
         try {
             List<Student> studentList = studentDao.findAllStudents();
             //add all students from list to map
@@ -149,5 +150,27 @@ public class StudentManager {
             System.out.println("Could not save Students details !!! ");
         }
 
+    }
+
+    private class mySqlStudentDao implements com.dkit.oopca5.DAOs.StudentDaoInterface {
+        @Override
+        public List<Student> findAllStudents() throws DaoException {
+            return null;
+        }
+
+        @Override
+        public Student findStudentByCaoNumberPassword(int caoNumber, String password) throws DaoException {
+            return null;
+        }
+
+        @Override
+        public String register(int caoNumber, String dateOfBirth, String password) throws DaoException {
+            return null;
+        }
+
+        @Override
+        public boolean login(int caoNumber, String password) throws DaoException {
+            return false;
+        }
     }
 }

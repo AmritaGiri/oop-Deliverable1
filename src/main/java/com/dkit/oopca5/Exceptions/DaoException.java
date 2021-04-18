@@ -1,4 +1,4 @@
-package com.dkit.oopca5.server;
+package com.dkit.oopca5.Exceptions;
 
 /**
  * A 'homemade' Exception to report exceptions

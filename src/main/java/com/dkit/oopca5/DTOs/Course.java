@@ -6,7 +6,7 @@ import java.util.Objects;
 public class Course {
 
     private String courseId;   // e.g. DK821
-    private String level;      // e.g. 7, 8, 9, 10
+    private int level;      // e.g. 7, 8, 9, 10
     private String title;      // e.g. BSc in Computing in Software Development
     private String institution; // Dundalk Institute of Technology
 
@@ -25,7 +25,7 @@ public class Course {
 
 
     // Constructor
-    public Course(String courseId, String level, String title, String institution) {
+    public Course(String courseId, int level, String title, String institution) {
         this.courseId = courseId;
         this.level = level;
         this.title = title;
@@ -45,11 +45,11 @@ public class Course {
         this.courseId = courseId;
     }
 
-    public String getLevel() {
+    public int getLevel() {
         return level;
     }
 
-    public void setLevel(String level) {
+    public void setLevel(int level) {
         this.level = level;
     }
 

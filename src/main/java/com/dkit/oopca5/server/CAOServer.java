@@ -5,62 +5,89 @@ package com.dkit.oopca5.server;
  The server should listen for connections and once a connection is accepted it should spawn a new CAOClientHandler thread to deal with that connection. The server then returns to listening
  */
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import com.dkit.oopca5.core.CAOService;
+
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.time.LocalTime;
+import java.util.Date;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
+
 
 public class CAOServer {
     public static void main(String[] args) {
-        CAOServer server = new CAOServer();
-        server.start();
-    }
-
-    public void start() {
         try {
-            ServerSocket ss = new ServerSocket(8080);
-            System.out.println("Server Message: Server started. Listening for connections...");
+            //Step 1: Set up a listening socket - this just listens for connections
+            //Once a socket connects we create a dataSocket for the rest of the
+            //communication
+            ServerSocket listeningSocket = new ServerSocket(CAOService.PORT_NUM);
+            Socket dataSocket = new Socket();
 
-            while (true) {
-                Socket socket = ss.accept();  // wait for client to connect, and open a socket with the client
+            boolean continueRunning = true;
 
-                System.out.println("Server Message: A Client has connected.");
+            while (continueRunning) {
+                //Step 2
+                //Once a connection is accepted on the listening socket
+                //spawn a dataSocket for the rest of the communication
+                dataSocket = listeningSocket.accept();
 
-                Scanner in = new Scanner(socket.getInputStream());
-                String command = in.nextLine();
+                //Step 3 - set up input and output streams
+                OutputStream out = dataSocket.getOutputStream();
+                //Decorator pattern
+                PrintWriter output = new PrintWriter(new OutputStreamWriter(out));
 
-                System.out.println("Server message: Received from client : \"" + command + "\"");
+                InputStream in = dataSocket.getInputStream();
+                Scanner input = new Scanner(new InputStreamReader(in));
 
-                OutputStream os = socket.getOutputStream();
-                PrintWriter out = new PrintWriter(os, true);
-                if (command.startsWith("Time")) {
-                    LocalTime time = LocalTime.now();
-                    out.print(time);
-                } else if (command.startsWith("Echo")) {
-                    command = command.substring(5); // strip off the 'Echo ' part
-                    out.print(command + "\n");
-                } else {
-                    out.print("I'm sorry i don't understand :(\n");
+                String incomingMessage = "";
+                String response;
+
+                while (true) {
+
+                    response = null;
+
+                    //Take the information from the client
+                    incomingMessage = input.nextLine();
+                    System.out.println("Received message: " + incomingMessage);
+
+                    String[] messageComponents = incomingMessage.split(CAOService.BREAKING_CHARACTER);
+                    //echo%%Hello World, echo%%Hello%%World
+                    //0%%1                  0%%1%%2
+                    if (messageComponents[0].equals(CAOService.REGISTER_COMMAND)) {
+                        StringBuffer echoMessage = new StringBuffer("");
+                        if (messageComponents.length > 1) {
+                            echoMessage.append(messageComponents[1]);
+
+                        }
+                        for (int i = 2; i < messageComponents.length; i++) {
+                            echoMessage.append(CAOService.BREAKING_CHARACTER);
+                            echoMessage.append(messageComponents[i]);
+                        }
+                        response = echoMessage.toString();
+                    } else if (messageComponents[0].equals(CAOService.SUCCESSFUL_REGISTER)) {
+                        response = new Date().toString();
+                    } else if (messageComponents[0].equals(CAOService.FAILED_REGISTER)) {
+                        //TODO Home work
+                        response = "This has not been implemented yet. This is for homework";
+                    } else if (messageComponents[0].equals(CAOService.END_SESSION)) {
+                        response = CAOService.SESSION_TERMINATED;
+                    } else {
+                        response = CAOService.UNRECOGNISED;
+                    }
+
+                    //Send response back
+                    output.println(response);
+                    output.flush();
                 }
-                out.flush();  // force the response to be sent
-                socket.close();
+
             }
         } catch (IOException e) {
-            System.out.println("Server Message: IOException: " + e);
+            System.out.println(e.getMessage());
+            ;
+        } catch (NoSuchElementException e) {
+            System.out.println("Shutting down. I think we need threads");
+            System.exit(1);
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-

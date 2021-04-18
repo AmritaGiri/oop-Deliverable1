@@ -1,4 +1,4 @@
-package com.dkit.oopca5.server;
+package com.dkit.oopca5.DAO;
 /**
  * MySqlDao -
  * - implements functionality that is common to all MySQL DAOs
@@ -9,16 +9,17 @@ package com.dkit.oopca5.server;
  */
 
 
+import com.dkit.oopca5.Exceptions.DaoException;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-
 
 public class MySqlDao {
     public Connection getConnection() throws DaoException {
 
         String driver = "com.mysql.cj.jdbc.Driver";
-        String url = "jdbc:mysql://localhost:3306/oop_ca5_amrita_giri";
+        String url = "jdbc:mysql://localhost:3306/oop_ca5_santos_odigie";
         String username = "root";
         String password = "";
         Connection con = null;
