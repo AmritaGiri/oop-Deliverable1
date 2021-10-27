@@ -10,7 +10,7 @@ public class App {
     public static void main(String[] args) throws DaoException {
 
         String url = "jdbc:mysql://localhost/";
-        String dbName = "oop_ca5_santos_odigie";
+        String dbName = "oop_ca5_amrita_giri";
 //            String driver = "com.mysql.cj.jdbc.Driver";
         String userName = "root";
         String password = "";
